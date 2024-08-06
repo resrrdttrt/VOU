@@ -91,7 +91,7 @@ func migrateDB(db *sql.DB) error {
 						type       		VARCHAR(20)    	NOT NULL,
 						exchange_allow  BOOLEAN         NOT NULL,
 						tutorial       	TEXT         	NOT NULL,
-						org_id       	UUID            NOT NULL REFERENCES user(id)
+						user_id       	UUID            NOT NULL REFERENCES user(id)
 					)`,
 				},
 				Down: []string{

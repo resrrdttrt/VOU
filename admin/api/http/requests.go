@@ -1,4 +1,4 @@
-package httppackage http
+package http
 
 import (
 	"fmt"
