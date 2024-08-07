@@ -9,10 +9,17 @@ func Env(key, fallback string) string {
 	return fallback
 }
 
-type Response interface {
-	Code() int
-
-	Headers() map[string]string
-
-	Empty() bool
+type GeneralRes struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data,omitempty"`
 }
+
+func SuccessRes(data interface{}) GeneralRes {
+	return GeneralRes{
+		Code:    200,
+		Message: "success",
+		Data:    data,
+	}
+}
+

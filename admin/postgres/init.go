@@ -3,7 +3,7 @@ package postgres
 import (
 	"database/sql"
 	"fmt"
-
+	"github.com/resrrdttrt/VOU/pkg/errors"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq" // required for SQL access
 	migrate "github.com/rubenv/sql-migrate"
@@ -23,6 +23,16 @@ type Config struct {
 	SSLKey      string
 	SSLRootCert string
 }
+
+
+var (
+	ErrInsertDb        = errors.New("Error inserting to database")
+	ErrUpdateDb        = errors.New("Error updating database")
+	ErrDeleteDb        = errors.New("Error deleting from database")
+	ErrSelectDb        = errors.New("Error selecting from database")
+	ErrMarshalJSON     = errors.New("Error marshaling to JSON")
+	ErrUnmarshalJSON   = errors.New("Error unmarshaling")
+)
 
 // func Connect(cfg Config) (*sqlx.DB, error) {
 // 	url := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s sslcert=%s sslkey=%s sslrootcert=%s", cfg.Host, cfg.Port, cfg.User, cfg.Name, cfg.Pass, cfg.SSLMode, cfg.SSLCert, cfg.SSLKey, cfg.SSLRootCert)
@@ -91,7 +101,6 @@ func migrateDB(db *sql.DB) error {
 						type       		VARCHAR(20)    	NOT NULL,
 						exchange_allow  BOOLEAN         NOT NULL,
 						tutorial       	TEXT         	NOT NULL,
-						user_id       	UUID            NOT NULL REFERENCES user(id)
 					)`,
 				},
 				Down: []string{

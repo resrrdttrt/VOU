@@ -1,9 +1,10 @@
 package http
 
-type tokenResponse struct {
-	AccessToken string `json:"access_token"`
+type Response interface {
+	Code() int
+	Headers() map[string]string
+	Empty() bool
 }
-
 
 type errorResponse struct {
 	Message string `json:"message"`

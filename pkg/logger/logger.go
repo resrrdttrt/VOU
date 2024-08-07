@@ -72,7 +72,6 @@ func New(out io.Writer, levelText string) (Logger, error) {
 	if err != nil {
 		return nil, fmt.Errorf(`{"l":"error","m":"%s: %s","ts":"%s"}`, err, levelText, time.DateTime)
 	}
-	//l := log.NewJSONLogger(log.NewSyncWriter(out))
 	l := log.NewLogfmtLogger(log.NewSyncWriter(out))
 	l = log.With(l, "ts", log.DefaultTimestampUTC)
 	return &logger{l, level}, err
@@ -158,14 +157,12 @@ func (l *logger) LogS(ctx context.Context, s string, i ...interface{}) {
 func (l *logger) LogRS(data string) {
 	if System.isAllowed(l.level) {
 		fmt.Println("LOG|" + time.Now().Format("01/02 15:04:05") + "|" + Debug.String() + "|" + data)
-		//l.kitLogger.Log("l", System.String(), "data", data)
 	}
 }
 
 func (l *logger) LogRE(data string) {
 	if System.isAllowed(l.level) {
 		fmt.Println("LOG|" + time.Now().Format("01/02 15:04:05") + "|" + Debug.String() + "|" + data)
-		//l.kitLogger.Log("l", Error.String(), "data", data)
 	}
 }
 

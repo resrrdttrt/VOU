@@ -26,13 +26,6 @@ type Database interface {
 	PrepareIn(string, ...interface{}) (string, []interface{}, error)
 }
 
-// // NewDatabase creates a Database instance
-// func NewDatabase(db *sqlx.DB) Database {
-// 	return &database{
-// 		dbWrite: db,
-// 		dbRead:  db,
-// 	}
-// }
 
 // NewReadWrite create a Database instance with separated read/write client
 func NewReadWrite(rdb *sqlx.DB, wdb *sqlx.DB) Database {

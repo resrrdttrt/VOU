@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"github.com/resrrdttrt/VOU/admin"
 	"github.com/resrrdttrt/VOU/admin/postgres"
 	"github.com/resrrdttrt/VOU/pkg/common"
 	"github.com/resrrdttrt/VOU/pkg/logger"
@@ -18,8 +19,6 @@ import (
 const (
 	DefHTTPPort       = "8070"
 	DefLogLevel       = "info"
-	ContentType       = "application/json"
-	AcceptLanguage    = "vi;q=0.9,en;q=0.8"
 	ConnectionTimeout = 10
 
 	DefDBHost      = "localhost"
@@ -84,8 +83,9 @@ func main() {
 
 	// mongoDriver := db.ConnectToMongoDB(db.GetMongoConfig(), logging)
 	// commonMongo := db.NewMongoTransactions(mongoDriver)
+	// svc := newService(logging, rdb, wdb, commonMongo)
 
-	svc := newService(logging, rdb, wdb, commonMongo)
+	svc := newService(logging, rdb, wdb)
 	errs := make(chan error)
 	go startHTTPServer(thhttpapi.MakeHandler(svc), cfg, logging, make(chan error))
 	go func() {
@@ -94,14 +94,16 @@ func main() {
 		errs <- fmt.Errorf("%s", <-c)
 	}()
 	err = <-errs
-	logging.Log(fmt.Sprintf("Mysafe service terminated: %s", err))
+	logging.Log(fmt.Sprintf("Admin service terminated: %s", err))
 
 }
 
-func newService(logger logger.Logger, rdb *sqlx.DB, wdb *sqlx.DB, commonMongo db.CommonMongoService) mysafe.Service {
+func newService(logger logger.Logger, rdb *sqlx.DB, wdb *sqlx.DB) admin.Service {
 	database := db.NewReadWrite(rdb, wdb)
-	mysafeRepo := postgres.NewMysafeRepository(database, logger)
-	svc := mysafe.New(logger, mysafeRepo, commonMongo)
+	userRepo := postgres.NewUserRepository(database, logger)
+	gameRepo := postgres.NewGameRepository(database, logger)
+	statisticRepo := postgres.NewStatisticRepository(database, logger)
+	svc := admin.NewAdminService(logger, userRepo, gameRepo, statisticRepo)
 	return svc
 }
 
