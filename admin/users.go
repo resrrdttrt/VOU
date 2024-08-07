@@ -6,16 +6,16 @@ import (
 )
 
 type User struct {
-	ID        string    `json:"id,omitempty"`
-	Name      string    `json:"name"`
-	Username  string    `json:"username"`
-	Password  string    `json:"password"`
-	Email     string    `json:"email"`
-	Phone     string    `json:"phone"`
-	Role      string    `json:"role,omitempty"`
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	Status    string    `json:"status,omitempty"`
+	ID        string    `db:"id" json:"id,omitempty"`
+	Name      string    `db:"name" json:"name"`
+	Username  string    `db:"username" json:"username"`
+	Password  string    `db:"password" json:"password"`
+	Email     string    `db:"email" json:"email"`
+	Phone     string    `db:"phone" json:"phone"`
+	Role      string    `db:"role" json:"role,omitempty"`
+	CreatedAt time.Time `db:"created_at" json:"created_at,omitempty"`
+	UpdatedAt time.Time `db:"updated_at" json:"updated_at,omitempty"`
+	Status    string    `db:"status" json:"status,omitempty"`
 }
 
 type UserRepository interface {

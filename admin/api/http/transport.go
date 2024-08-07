@@ -26,7 +26,7 @@ func MakeHandler(svc admin.Service) http.Handler {
 		encodeResponse,
 		opts...,
 	))
-	r.Post("/admin/user/", kithttp.NewServer(
+	r.Post("/admin/user", kithttp.NewServer(
 		createUserEndpoint(svc),
 		decodeCreateUserRequest,
 		encodeResponse,
@@ -44,11 +44,102 @@ func MakeHandler(svc admin.Service) http.Handler {
 		encodeResponse,
 		opts...,
 	))
-	// r.Post("/mysafe/feedback/:api", kithttp.NewServer(
-	// 	feedbackEndpoint(svc),
-	// 	decodeFeedbackRequest,
-	// 	encodeResponse,
-	// ))
+	r.Get("/admin/user/active/:id", kithttp.NewServer(
+		activeUserEndpoint(svc),
+		decodeGetUserRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Get("/admin/user/deactive/:id", kithttp.NewServer(
+		deactiveUserEndpoint(svc),
+		decodeGetUserRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Get("/admin/game/:id", kithttp.NewServer(
+		getGameEndpoint(svc),
+		decodeGetGameRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Post("/admin/game", kithttp.NewServer(
+		createGameEndpoint(svc),
+		decodeCreateGameRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Put("/admin/game/:id", kithttp.NewServer(
+		updateGameEndpoint(svc),
+		decodeUpdateGameRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Delete("/admin/game/:id", kithttp.NewServer(
+		deleteGameEndpoint(svc),
+		decodeGetGameRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Get("/admin/statistic/total_users", kithttp.NewServer(
+		getTotalUsersEndpoint(svc),
+		decodeStatisticRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Get("/admin/statistic/total_games", kithttp.NewServer(
+		getTotalGamesEndpoint(svc),
+		decodeStatisticRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Get("/admin/statistic/total_enterprises", kithttp.NewServer(
+		getTotalEnterprisesEndpoint(svc),
+		decodeStatisticRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Get("/admin/statistic/total_end_users", kithttp.NewServer(
+		getTotalEndUserEndpoint(svc),
+		decodeStatisticRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Get("/admin/statistic/total_active_end_users", kithttp.NewServer(
+		getTotalActiveEndUsersEndpoint(svc),
+		decodeStatisticRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Get("/admin/statistic/total_active_enterprises", kithttp.NewServer(
+		getTotalActiveEnterprisesEndpoint(svc),
+		decodeStatisticRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Get("/admin/statistic/total_new_enterprises_in_time", kithttp.NewServer(
+		getTotalNewEnterprisesInTimeEndpoint(svc),
+		decodeStatisticInTimeRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Get("/admin/statistic/total_new_end_users_in_time", kithttp.NewServer(
+		getTotalNewEndUsersInTimeEndpoint(svc),
+		decodeStatisticInTimeRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Get("/admin/statistic/total_new_end_users_in_week", kithttp.NewServer(
+		getTotalNewEndUsersInWeekEndpoint(svc),
+		decodeStatisticRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Get("/admin/statistic/total_new_enterprises_in_week", kithttp.NewServer(
+		getTotalNewEnterprisesInWeekEndpoint(svc),
+		decodeStatisticRequest,
+		encodeResponse,
+		opts...,
+	))
 	return r
 }
 
@@ -116,32 +207,39 @@ func decodeGetUserRequest(_ context.Context, r *http.Request) (interface{}, erro
 	return req, nil
 }
 
-// func decodeAuthRequest(_ context.Context, r *http.Request) (interface{}, error) {
-// 	var req authRequest
-// 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-// 		return nil, errors.Wrap(errors.ErrMalformedEntity, err)
-// 	}
-// 	extraInfo, err := keto.NewExtra(r)
-// 	if err != nil {
-// 		return nil, errors.Wrap(keto.ErrGetExtra, err)
-// 	}
-// 	api := bone.GetValue(r, "api")
-// 	req.UserId = extraInfo.UserId
-// 	req.API = api
-// 	return req, nil
-// }
+func decodeGetGameRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var req getGameRequest
+	id := bone.GetValue(r, "id")
+	req.ID = id
+	return req, nil
+}
 
-// func decodeFeedbackRequest(_ context.Context, r *http.Request) (interface{}, error) {
-// 	var req feedbackRequest
-// 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-// 		return nil, errors.Wrap(mysafe.ErrMalformedEntity, err)
-// 	}
-// 	extraInfo, err := keto.NewExtra(r)
-// 	if err != nil {
-// 		return nil, errors.Wrap(keto.ErrGetExtra, err)
-// 	}
-// 	api := bone.GetValue(r, "api")
-// 	req.UserId = extraInfo.UserId
-// 	req.API = api
-// 	return req, nil
-// }
+func decodeCreateGameRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var req createGameRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return nil, errors.Wrap(errors.ErrMalformedEntity, err)
+	}
+	return req, nil
+}
+
+func decodeUpdateGameRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var req updateGameRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return nil, errors.Wrap(errors.ErrMalformedEntity, err)
+	}
+	id := bone.GetValue(r, "id")
+	req.ID = id
+	return req, nil
+}
+
+func decodeStatisticRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	return nil, nil
+}
+
+func decodeStatisticInTimeRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var req statisticInTimeRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return nil, errors.Wrap(errors.ErrMalformedEntity, err)
+	}
+	return req, nil
+}

@@ -7,17 +7,18 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/jmoiron/sqlx"
 	"github.com/resrrdttrt/VOU/admin"
+	thhttpapi "github.com/resrrdttrt/VOU/admin/api/http"
 	"github.com/resrrdttrt/VOU/admin/postgres"
 	"github.com/resrrdttrt/VOU/pkg/common"
-	"github.com/resrrdttrt/VOU/pkg/logger"
 	"github.com/resrrdttrt/VOU/pkg/db"
-	thhttpapi "github.com/resrrdttrt/VOU/admin/api/http"
-	"github.com/jmoiron/sqlx"
+	"github.com/resrrdttrt/VOU/pkg/logger"
 )
 
 const (
-	DefHTTPPort       = "8070"
+	DefHTTPPort       = "1111"
 	DefLogLevel       = "info"
 	ConnectionTimeout = 10
 
@@ -27,7 +28,7 @@ const (
 	DefDBPortWrite = "5432"
 	DefDBUser      = "postgres"
 	DefDBPass      = "1"
-	DefDbName      = "postgres"
+	DefDbName      = "admin"
 	DefSSLMode     = "disable"
 	DefSSLCert     = ""
 	DefSSLKey      = ""
@@ -37,7 +38,7 @@ const (
 	MongoUser    = "root"
 	MongoPass    = "1"
 	MongoReplica = "rs0"
-	MongoDbName  = "mysafe"
+	MongoDbName  = "admin"
 )
 
 type config struct {

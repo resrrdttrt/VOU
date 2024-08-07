@@ -11,7 +11,6 @@ import (
 
 var _ admin.UserRepository = (*usersRepository)(nil)
 
-
 type usersRepository struct {
 	db db.Database
 	l  log.Logger
@@ -25,7 +24,7 @@ func NewUserRepository(db db.Database, l log.Logger) admin.UserRepository {
 }
 
 func (r *usersRepository) GetUserById(ctx context.Context, id string) (admin.User, error) {
-	query := `SELECT * FROM users WHERE id = $1`
+	query := `SELECT * FROM users WHERE id = :id`
 	params := map[string]interface{}{
 		"id": id,
 	}
@@ -45,16 +44,16 @@ func (r *usersRepository) GetUserById(ctx context.Context, id string) (admin.Use
 	}
 }
 
-func (r *usersRepository) CreateUser(ctx context.Context, user admin.User) (error) {
+func (r *usersRepository) CreateUser(ctx context.Context, user admin.User) error {
 	query := `INSERT INTO users (name, username, password, email, phone, role, status) VALUES (:name, :username, :password, :email, :phone, :role, :status) RETURNING id`
 	params := map[string]interface{}{
-		"name":        user.Name,
-		"username":    user.Username,
-		"password":    user.Password,
-		"email":       user.Email,
-		"phone":       user.Phone,
-		"role":        user.Role,
-		"status":      user.Status,
+		"name":     user.Name,
+		"username": user.Username,
+		"password": user.Password,
+		"email":    user.Email,
+		"phone":    user.Phone,
+		"role":     user.Role,
+		"status":   user.Status,
 	}
 	_, err := r.db.NamedExecContext(ctx, query, params)
 	if err != nil {
@@ -63,17 +62,17 @@ func (r *usersRepository) CreateUser(ctx context.Context, user admin.User) (erro
 	return nil
 }
 
-func (r *usersRepository) UpdateUser(ctx context.Context, user admin.User) (error) {
+func (r *usersRepository) UpdateUser(ctx context.Context, user admin.User) error {
 	query := `UPDATE users SET name = :name, username = :username, password = :password, email = :email, phone = :phone, role = :role, status = :status WHERE id = :id RETURNING *`
 	params := map[string]interface{}{
-		"id":          user.ID,
-		"name":        user.Name,
-		"username":    user.Username,
-		"password":    user.Password,
-		"email":       user.Email,
-		"phone":       user.Phone,
-		"role":        user.Role,
-		"status":      user.Status,
+		"id":       user.ID,
+		"name":     user.Name,
+		"username": user.Username,
+		"password": user.Password,
+		"email":    user.Email,
+		"phone":    user.Phone,
+		"role":     user.Role,
+		"status":   user.Status,
 	}
 	_, err := r.db.NamedExecContext(ctx, query, params)
 	if err != nil {
@@ -82,8 +81,8 @@ func (r *usersRepository) UpdateUser(ctx context.Context, user admin.User) (erro
 	return nil
 }
 
-func (r *usersRepository) DeleteUser(ctx context.Context, id string) (error) {
-	query := `DELETE FROM users WHERE id = $1`
+func (r *usersRepository) DeleteUser(ctx context.Context, id string) error {
+	query := `DELETE FROM users WHERE id = :id`
 	params := map[string]interface{}{
 		"id": id,
 	}
@@ -93,4 +92,3 @@ func (r *usersRepository) DeleteUser(ctx context.Context, id string) (error) {
 	}
 	return nil
 }
-
