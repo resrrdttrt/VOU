@@ -302,3 +302,16 @@ func getTotalNewEnterprisesInWeekEndpoint(svc admin.Service) endpoint.Endpoint {
 	}
 }
 
+func loginEndpoint(svc admin.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(loginRequest)
+		if err := req.validate(); err != nil {
+			return nil, err
+		}
+		token, err := svc.Login(ctx, req.Username, req.Password)
+		if err != nil {
+			return nil, err
+		}
+		return common.SuccessRes(token), nil
+	}
+}

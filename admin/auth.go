@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 
@@ -56,4 +57,14 @@ func GetUserRoleByID(userID string) (string, error) {
 	}
 
 	return role, nil
+}
+
+type Token struct {
+	AccessToken string `json:"access_token"`
+}
+
+type AuthRepository interface {
+	Login(ctx context.Context, username, password string) (Token, error)
+	GetUserIDByAccessToken(accessToken string) (string, error)
+	GetUserRoleByID(userID string) (string, error)
 }

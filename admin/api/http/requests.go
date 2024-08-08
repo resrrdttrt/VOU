@@ -180,3 +180,18 @@ func (req statisticInTimeRequest) validate() error {
 	}
 	return nil
 }
+
+type loginRequest struct {	
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+func (req loginRequest) validate() error {
+	if req.Username == "" {
+		return errMissing("username")
+	}
+	if req.Password == "" {
+		return errMissing("password")
+	}
+	return nil
+}

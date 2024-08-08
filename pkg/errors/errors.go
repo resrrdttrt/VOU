@@ -11,6 +11,7 @@ var (
 
 	ErrUUID = New("Wrong UUID format")
 
+
 	// ErrSaveDb indicates error while saving to database
 	ErrSaveDb = New("save entity to db error")
 	// ErrUpdateDb indicates error while updating database

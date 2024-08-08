@@ -32,6 +32,7 @@ var (
 	ErrSelectDb      = errors.New("Error selecting from database")
 	ErrMarshalJSON   = errors.New("Error marshaling to JSON")
 	ErrUnmarshalJSON = errors.New("Error unmarshaling")
+	ErrGenerateToken = errors.New("Failed to generate token")
 )
 
 // func Connect(cfg Config) (*sqlx.DB, error) {

@@ -14,140 +14,140 @@ import (
 	"github.com/go-zoo/bone"
 )
 
-func MakeHandler(svc admin.Service) http.Handler {
+func MakeAdminHandler(svc admin.Service) http.Handler {
 	opts := []kithttp.ServerOption{
 		kithttp.ServerErrorEncoder(encodeError),
 	}
 
 	r := bone.New()
 
-	r.Get("/admin/user", kithttp.NewServer(
+	r.Get("/user", kithttp.NewServer(
 		getAllUsersEndpoint(svc),
 		decodeNothingRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Get("/admin/user/:id", kithttp.NewServer(
+	r.Get("/user/:id", kithttp.NewServer(
 		getUserEndpoint(svc),
 		decodeGetUserRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Post("/admin/user", kithttp.NewServer(
+	r.Post("/user", kithttp.NewServer(
 		createUserEndpoint(svc),
 		decodeCreateUserRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Put("/admin/user/:id", kithttp.NewServer(
+	r.Put("/user/:id", kithttp.NewServer(
 		updateUserEndpoint(svc),
 		decodeUpdateUserRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Delete("/admin/user/:id", kithttp.NewServer(
+	r.Delete("/user/:id", kithttp.NewServer(
 		deleteUserEndpoint(svc),
 		decodeGetUserRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Get("/admin/user/active/:id", kithttp.NewServer(
+	r.Get("/user/active/:id", kithttp.NewServer(
 		activeUserEndpoint(svc),
 		decodeGetUserRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Get("/admin/user/deactive/:id", kithttp.NewServer(
+	r.Get("/user/deactive/:id", kithttp.NewServer(
 		deactiveUserEndpoint(svc),
 		decodeGetUserRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Get("/admin/game", kithttp.NewServer(
+	r.Get("/game", kithttp.NewServer(
 		getAllGamesEndpoint(svc),
 		decodeNothingRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Get("/admin/game/:id", kithttp.NewServer(
+	r.Get("/game/:id", kithttp.NewServer(
 		getGameEndpoint(svc),
 		decodeGetGameRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Post("/admin/game", kithttp.NewServer(
+	r.Post("/game", kithttp.NewServer(
 		createGameEndpoint(svc),
 		decodeCreateGameRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Put("/admin/game/:id", kithttp.NewServer(
+	r.Put("/game/:id", kithttp.NewServer(
 		updateGameEndpoint(svc),
 		decodeUpdateGameRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Delete("/admin/game/:id", kithttp.NewServer(
+	r.Delete("/game/:id", kithttp.NewServer(
 		deleteGameEndpoint(svc),
 		decodeGetGameRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Get("/admin/statistic/total_users", kithttp.NewServer(
+	r.Get("/statistic/total_users", kithttp.NewServer(
 		getTotalUsersEndpoint(svc),
 		decodeNothingRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Get("/admin/statistic/total_games", kithttp.NewServer(
+	r.Get("/statistic/total_games", kithttp.NewServer(
 		getTotalGamesEndpoint(svc),
 		decodeNothingRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Get("/admin/statistic/total_enterprises", kithttp.NewServer(
+	r.Get("/statistic/total_enterprises", kithttp.NewServer(
 		getTotalEnterprisesEndpoint(svc),
 		decodeNothingRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Get("/admin/statistic/total_end_users", kithttp.NewServer(
+	r.Get("/statistic/total_end_users", kithttp.NewServer(
 		getTotalEndUserEndpoint(svc),
 		decodeNothingRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Get("/admin/statistic/total_active_end_users", kithttp.NewServer(
+	r.Get("/statistic/total_active_end_users", kithttp.NewServer(
 		getTotalActiveEndUsersEndpoint(svc),
 		decodeNothingRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Get("/admin/statistic/total_active_enterprises", kithttp.NewServer(
+	r.Get("/statistic/total_active_enterprises", kithttp.NewServer(
 		getTotalActiveEnterprisesEndpoint(svc),
 		decodeNothingRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Get("/admin/statistic/total_new_enterprises_in_time", kithttp.NewServer(
+	r.Get("/statistic/total_new_enterprises_in_time", kithttp.NewServer(
 		getTotalNewEnterprisesInTimeEndpoint(svc),
 		decodeStatisticInTimeRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Get("/admin/statistic/total_new_end_users_in_time", kithttp.NewServer(
+	r.Get("/statistic/total_new_end_users_in_time", kithttp.NewServer(
 		getTotalNewEndUsersInTimeEndpoint(svc),
 		decodeStatisticInTimeRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Get("/admin/statistic/total_new_end_users_in_week", kithttp.NewServer(
+	r.Get("/statistic/total_new_end_users_in_week", kithttp.NewServer(
 		getTotalNewEndUsersInWeekEndpoint(svc),
 		decodeNothingRequest,
 		encodeResponse,
 		opts...,
 	))
-	r.Get("/admin/statistic/total_new_enterprises_in_week", kithttp.NewServer(
+	r.Get("/statistic/total_new_enterprises_in_week", kithttp.NewServer(
 		getTotalNewEnterprisesInWeekEndpoint(svc),
 		decodeNothingRequest,
 		encodeResponse,
@@ -258,4 +258,37 @@ func decodeStatisticInTimeRequest(_ context.Context, r *http.Request) (interface
 	return req, nil
 }
 
+
+func MakeAuthHandler(svc admin.Service) http.Handler {
+	opts := []kithttp.ServerOption{
+		kithttp.ServerErrorEncoder(encodeError),
+	}
+
+	r := bone.New()
+
+	r.Post("/login", kithttp.NewServer(
+		loginEndpoint(svc),
+		decodeLoginRequest,
+		encodeResponse,
+		opts...,
+	))
+	return r
+}
+
+func decodeLoginRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var req loginRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return nil, errors.Wrap(errors.ErrMalformedEntity, err)
+	}
+	return req, nil
+}
+
+func MakeHandler (svc admin.Service) http.Handler {
+	r := bone.New()
+	adminHandler := MakeAdminHandler(svc)
+	authHandler := MakeAuthHandler(svc)
+	r.SubRoute("/admin", adminHandler)
+	r.SubRoute("/auth", authHandler)
+	return r
+}
 

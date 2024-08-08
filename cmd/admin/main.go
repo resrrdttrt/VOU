@@ -109,7 +109,8 @@ func newService(logger logger.Logger, rdb *sqlx.DB, wdb *sqlx.DB) admin.Service 
 	userRepo := postgres.NewUserRepository(database, logger)
 	gameRepo := postgres.NewGameRepository(database, logger)
 	statisticRepo := postgres.NewStatisticRepository(database, logger)
-	svc := admin.NewAdminService(logger, userRepo, gameRepo, statisticRepo)
+	authRepo := postgres.NewAuthRepository(database, logger)
+	svc := admin.NewAdminService(logger, userRepo, gameRepo, statisticRepo, authRepo)
 	return svc
 }
 

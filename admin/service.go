@@ -12,12 +12,14 @@ type adminService struct {
 	users     UserRepository
 	games     GameRepository
 	statistic StatisticRepository
+	auth      AuthRepository
 }
 
 type Service interface {
 	userService
 	gameService
 	statisticService
+	authService
 }
 
 type userService interface {
@@ -56,12 +58,20 @@ type statisticService interface {
 	GetTotalNewEnterprisesInWeek(ctx context.Context) (Statistic, error)
 }
 
-func NewAdminService(log log.Logger, users UserRepository, games GameRepository, statistic StatisticRepository) Service {
+type authService interface {
+	// Auth
+	Login(ctx context.Context, username, password string) (Token, error)
+	GetUserIDByAccessToken(accessToken string) (string, error)
+	GetUserRoleByID(userID string) (string, error)
+}
+
+func NewAdminService(log log.Logger, users UserRepository, games GameRepository, statistic StatisticRepository, auth AuthRepository) Service {
 	return &adminService{
 		log:       log,
 		users:     users,
 		games:     games,
 		statistic: statistic,
+		auth:      auth,
 	}
 }
 
@@ -163,4 +173,16 @@ func (s *adminService) GetTotalNewEnterprisesInWeek(ctx context.Context) (Statis
 	now := time.Now()
 	start := now.AddDate(0, 0, -7)
 	return s.statistic.GetTotalNewEnterprisesInTime(ctx, start, now)
+}
+
+func (s *adminService) Login(ctx context.Context, username, password string) (Token, error) {
+	return s.auth.Login(ctx, username, password)
+}
+
+func (s *adminService) GetUserIDByAccessToken(accessToken string) (string, error) {
+	return s.auth.GetUserIDByAccessToken(accessToken)
+}
+
+func (s *adminService) GetUserRoleByID(userID string) (string, error) {
+	return s.auth.GetUserRoleByID(userID)
 }
