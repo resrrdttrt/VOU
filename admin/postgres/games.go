@@ -23,8 +23,27 @@ func NewGameRepository(db db.Database, l log.Logger) admin.GameRepository {
 	}
 }
 
+func (r *gamesRepository) GetAllGames(ctx context.Context) ([]admin.Game, error) {
+	query := `SELECT * FROM games`
+	params := map[string]interface{}{}
+	rows, err := r.db.NamedQueryContext(ctx, query, params)
+	if err != nil {
+		return nil, errors.Wrap(ErrSelectDb, err)
+	}
+	defer rows.Close()
+	var games []admin.Game
+	for rows.Next() {
+		var game admin.Game
+		if err := rows.StructScan(&game); err != nil {
+			return nil, errors.Wrap(ErrSelectDb, err)
+		}
+		games = append(games, game)
+	}
+	return games, nil
+}
+
 func (r *gamesRepository) GetGameById(ctx context.Context, id string) (admin.Game, error) {
-	query := `SELECT * FROM games WHERE id = $1`
+	query := `SELECT * FROM games WHERE id = :id`
 	params := map[string]interface{}{
 		"id": id,
 	}
@@ -78,7 +97,7 @@ func (r *gamesRepository) UpdateGame(ctx context.Context, game admin.Game) error
 }
 
 func (r *gamesRepository) DeleteGame(ctx context.Context, id string) error {
-	query := `DELETE FROM games WHERE id = $1`
+	query := `DELETE FROM games WHERE id = :id`
 	params := map[string]interface{}{
 		"id": id,
 	}

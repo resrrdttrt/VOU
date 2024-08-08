@@ -8,6 +8,16 @@ import (
 	"github.com/resrrdttrt/VOU/pkg/common"
 )
 
+func getAllUsersEndpoint(svc admin.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		users, err := svc.GetAllUsers(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return common.SuccessRes(users), nil
+	}
+}
+
 func createUserEndpoint(svc admin.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(createUserRequest)
@@ -103,6 +113,16 @@ func deactiveUserEndpoint(svc admin.Service) endpoint.Endpoint {
 			return nil, err
 		}
 		return common.SuccessRes(nil), nil
+	}
+}
+
+func getAllGamesEndpoint(svc admin.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		games, err := svc.GetAllGames(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return common.SuccessRes(games), nil
 	}
 }
 

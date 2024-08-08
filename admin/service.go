@@ -21,6 +21,7 @@ type Service interface {
 }
 
 type userService interface {
+	GetAllUsers(ctx context.Context) ([]User, error)
 	GetUserById(ctx context.Context, id string) (User, error)
 	CreateUser(ctx context.Context, user User) error
 	UpdateUser(ctx context.Context, user User) error
@@ -30,6 +31,7 @@ type userService interface {
 }
 
 type gameService interface {
+	GetAllGames(ctx context.Context) ([]Game, error)
 	GetGameById(ctx context.Context, id string) (Game, error)
 	CreateGame(ctx context.Context, game Game) error
 	UpdateGame(ctx context.Context, game Game) error
@@ -63,6 +65,10 @@ func NewAdminService(log log.Logger, users UserRepository, games GameRepository,
 	}
 }
 
+func (s *adminService) GetAllUsers(ctx context.Context) ([]User, error) {
+	return s.users.GetAllUsers(ctx)
+}
+
 func (s *adminService) GetUserById(ctx context.Context, id string) (User, error) {
 	return s.users.GetUserById(ctx, id)
 }
@@ -90,9 +96,13 @@ func (s *adminService) ActiveUser(ctx context.Context, id string) error {
 func (s *adminService) DeactiveUser(ctx context.Context, id string) error {
 	user := User{
 		ID:     id,
-		Status: "deactive",
+		Status: "inactive",
 	}
 	return s.users.UpdateUser(ctx, user)
+}
+
+func (s *adminService) GetAllGames(ctx context.Context) ([]Game, error) {
+	return s.games.GetAllGames(ctx)
 }
 
 func (s *adminService) GetGameById(ctx context.Context, id string) (Game, error) {

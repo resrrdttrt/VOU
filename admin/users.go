@@ -19,6 +19,7 @@ type User struct {
 }
 
 type UserRepository interface {
+	GetAllUsers(ctx context.Context) ([]User, error)
 	GetUserById(ctx context.Context, id string) (User, error)
 	CreateUser(ctx context.Context, user User) error
 	UpdateUser(ctx context.Context, user User) error

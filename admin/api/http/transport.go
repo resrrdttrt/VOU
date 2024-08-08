@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/resrrdttrt/VOU/admin"
+	"github.com/resrrdttrt/VOU/middlewares"
 	"github.com/resrrdttrt/VOU/pkg/errors"
 
 	kithttp "github.com/go-kit/kit/transport/http"
@@ -20,6 +21,12 @@ func MakeHandler(svc admin.Service) http.Handler {
 
 	r := bone.New()
 
+	r.Get("/admin/user", kithttp.NewServer(
+		getAllUsersEndpoint(svc),
+		decodeNothingRequest,
+		encodeResponse,
+		opts...,
+	))
 	r.Get("/admin/user/:id", kithttp.NewServer(
 		getUserEndpoint(svc),
 		decodeGetUserRequest,
@@ -56,6 +63,12 @@ func MakeHandler(svc admin.Service) http.Handler {
 		encodeResponse,
 		opts...,
 	))
+	r.Get("/admin/game", kithttp.NewServer(
+		getAllGamesEndpoint(svc),
+		decodeNothingRequest,
+		encodeResponse,
+		opts...,
+	))
 	r.Get("/admin/game/:id", kithttp.NewServer(
 		getGameEndpoint(svc),
 		decodeGetGameRequest,
@@ -82,37 +95,37 @@ func MakeHandler(svc admin.Service) http.Handler {
 	))
 	r.Get("/admin/statistic/total_users", kithttp.NewServer(
 		getTotalUsersEndpoint(svc),
-		decodeStatisticRequest,
+		decodeNothingRequest,
 		encodeResponse,
 		opts...,
 	))
 	r.Get("/admin/statistic/total_games", kithttp.NewServer(
 		getTotalGamesEndpoint(svc),
-		decodeStatisticRequest,
+		decodeNothingRequest,
 		encodeResponse,
 		opts...,
 	))
 	r.Get("/admin/statistic/total_enterprises", kithttp.NewServer(
 		getTotalEnterprisesEndpoint(svc),
-		decodeStatisticRequest,
+		decodeNothingRequest,
 		encodeResponse,
 		opts...,
 	))
 	r.Get("/admin/statistic/total_end_users", kithttp.NewServer(
 		getTotalEndUserEndpoint(svc),
-		decodeStatisticRequest,
+		decodeNothingRequest,
 		encodeResponse,
 		opts...,
 	))
 	r.Get("/admin/statistic/total_active_end_users", kithttp.NewServer(
 		getTotalActiveEndUsersEndpoint(svc),
-		decodeStatisticRequest,
+		decodeNothingRequest,
 		encodeResponse,
 		opts...,
 	))
 	r.Get("/admin/statistic/total_active_enterprises", kithttp.NewServer(
 		getTotalActiveEnterprisesEndpoint(svc),
-		decodeStatisticRequest,
+		decodeNothingRequest,
 		encodeResponse,
 		opts...,
 	))
@@ -130,17 +143,18 @@ func MakeHandler(svc admin.Service) http.Handler {
 	))
 	r.Get("/admin/statistic/total_new_end_users_in_week", kithttp.NewServer(
 		getTotalNewEndUsersInWeekEndpoint(svc),
-		decodeStatisticRequest,
+		decodeNothingRequest,
 		encodeResponse,
 		opts...,
 	))
 	r.Get("/admin/statistic/total_new_enterprises_in_week", kithttp.NewServer(
 		getTotalNewEnterprisesInWeekEndpoint(svc),
-		decodeStatisticRequest,
+		decodeNothingRequest,
 		encodeResponse,
 		opts...,
 	))
-	return r
+	handler := middlewares.VerifyAdminMiddleware(r)
+	return handler
 }
 
 func encodeResponse(_ context.Context, w http.ResponseWriter, response interface{}) error {
@@ -232,7 +246,7 @@ func decodeUpdateGameRequest(_ context.Context, r *http.Request) (interface{}, e
 	return req, nil
 }
 
-func decodeStatisticRequest(_ context.Context, r *http.Request) (interface{}, error) {
+func decodeNothingRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	return nil, nil
 }
 
@@ -243,3 +257,5 @@ func decodeStatisticInTimeRequest(_ context.Context, r *http.Request) (interface
 	}
 	return req, nil
 }
+
+

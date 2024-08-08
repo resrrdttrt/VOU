@@ -1,0 +1,654 @@
+{
+	"info": {
+		"_postman_id": "6871e4ad-4e9f-43af-a716-7b6e7995675d",
+		"name": "VOU",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36713886",
+		"_collection_link": "https://cam-mysafe.postman.co/workspace/Team-Workspace~774dba3b-8202-4492-82b3-3a5312729dca/collection/36713886-6871e4ad-4e9f-43af-a716-7b6e7995675d?action=share&source=collection_link&creator=36713886"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "GetAllUsers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/user",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetUserById",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/user/{{user_id}}",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"user",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateUser",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"TungDuong123\",\n    \"username\": \"duong123\",\n    \"password\": \"securepassword123\",\n    \"email\": \"john.doe@example.com\",\n    \"phone\": \"+1234567890\",\n    \"role\": \"end_user\",\n    \"status\": \"active\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:{{port}}/admin/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateUser",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"DUonhgt2\",\n    \"username\": \"johndoe\",\n    \"password\": \"securepassword123\",\n    \"email\": \"john.doe@example.com\",\n    \"phone\": \"+1234567890\",\n    \"role\": \"admin\",\n    \"status\": \"inactive\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:{{port}}/admin/user/{{user_id}}",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"user",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteUser",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/user/{{user_id}}",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"user",
+								"{{user_id}}"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ActiveUser",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/user/active/{{user_id}}",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"user",
+								"active",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeactiveUser",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/user/deactive/{{user_id}}",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"user",
+								"deactive",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Games",
+			"item": [
+				{
+					"name": "GetAllGames",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/game",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"game"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetGameById",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/game/{{game_id}}",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"game",
+								"{{game_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateGame",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Example Game\",\n  \"images\": \"[\\\"image1.jpg\\\", \\\"image2.jpg\\\"]\",\n  \"type\": \"Action\",\n  \"exchange_allow\": true,\n  \"tutorial\": \"This is a brief tutorial about how to play the game.\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:{{port}}/admin/game",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"game"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateGame",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Example Game 2\",\n  \"images\": \"[\\\"image1.jpg\\\", \\\"image2.jpg\\\"]\",\n  \"type\": \"Action\",\n  \"exchange_allow\": true,\n  \"tutorial\": \"This is a brief tutorial about how to play the game.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:{{port}}/admin/game/{{game_id}}",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"game",
+								"{{game_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteGame",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/game/{{game_id}}",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"game",
+								"{{game_id}}"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Statistic",
+			"item": [
+				{
+					"name": "GetTotalUsers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/statistic/total_users",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"statistic",
+								"total_users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTotalGames",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/statistic/total_games",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"statistic",
+								"total_games"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTotalEnterprise",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/statistic/total_enterprises",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"statistic",
+								"total_enterprises"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTotalEndUsers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/statistic/total_end_users",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"statistic",
+								"total_end_users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTotalActiveEndUsers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/statistic/total_active_end_users",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"statistic",
+								"total_active_end_users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTotalActiveEnterprises",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/statistic/total_active_enterprises",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"statistic",
+								"total_active_enterprises"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTotalNewEnterprisesInTime (skip)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/statistic/total_new_enterprises_in_time",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"statistic",
+								"total_new_enterprises_in_time"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTotalNewEndUsersInTime (skip)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/statistic/total_new_end_users_in_time",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"statistic",
+								"total_new_end_users_in_time"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTotalNewEndUsersInWeek",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/statistic/total_new_end_users_in_week",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"statistic",
+								"total_new_end_users_in_week"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTotalNewEnterprisesInWeek",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "1",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{port}}/admin/statistic/total_new_enterprises_in_week",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"admin",
+								"statistic",
+								"total_new_enterprises_in_week"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "game_id",
+			"value": "decodeNothingRequest"
+		}
+	]
+}

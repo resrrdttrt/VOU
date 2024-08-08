@@ -16,4 +16,5 @@ require (
 require (
 	github.com/go-gorp/gorp/v3 v3.1.0 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
+	github.com/stretchr/testify v1.8.1 // indirect
 )

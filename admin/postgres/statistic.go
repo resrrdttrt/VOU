@@ -26,8 +26,7 @@ func NewStatisticRepository(db db.Database, l log.Logger) admin.StatisticReposit
 
 func (r *statisticRepository) GetTotalUsers(ctx context.Context) (int, error) {
 	query := `SELECT COUNT(*) FROM users`
-	params := map[string]interface{}{
-	}
+	params := map[string]interface{}{}
 	rows, err := r.db.NamedQueryContext(ctx, query, params)
 	if err != nil {
 		return 0, errors.Wrap(ErrSelectDb, err)
@@ -46,8 +45,7 @@ func (r *statisticRepository) GetTotalUsers(ctx context.Context) (int, error) {
 
 func (r *statisticRepository) GetTotalGames(ctx context.Context) (int, error) {
 	query := `SELECT COUNT(*) FROM games`
-	params := map[string]interface{}{
-	}
+	params := map[string]interface{}{}
 	rows, err := r.db.NamedQueryContext(ctx, query, params)
 	if err != nil {
 		return 0, errors.Wrap(ErrSelectDb, err)
@@ -66,8 +64,7 @@ func (r *statisticRepository) GetTotalGames(ctx context.Context) (int, error) {
 
 func (r *statisticRepository) GetTotalEnterprises(ctx context.Context) (int, error) {
 	query := `SELECT COUNT(*) FROM users where role = 'enterprise'`
-	params := map[string]interface{}{
-	}
+	params := map[string]interface{}{}
 	rows, err := r.db.NamedQueryContext(ctx, query, params)
 	if err != nil {
 		return 0, errors.Wrap(ErrSelectDb, err)
@@ -86,8 +83,7 @@ func (r *statisticRepository) GetTotalEnterprises(ctx context.Context) (int, err
 
 func (r *statisticRepository) GetTotalEndUser(ctx context.Context) (int, error) {
 	query := `SELECT COUNT(*) FROM users where role = 'end_user'`
-	params := map[string]interface{}{
-	}
+	params := map[string]interface{}{}
 	rows, err := r.db.NamedQueryContext(ctx, query, params)
 	if err != nil {
 		return 0, errors.Wrap(ErrSelectDb, err)
@@ -106,8 +102,7 @@ func (r *statisticRepository) GetTotalEndUser(ctx context.Context) (int, error) 
 
 func (r *statisticRepository) GetTotalActiveEndUsers(ctx context.Context) (int, error) {
 	query := `SELECT COUNT(*) FROM users where role = 'end_user' and status = 'active'`
-	params := map[string]interface{}{
-	}
+	params := map[string]interface{}{}
 	rows, err := r.db.NamedQueryContext(ctx, query, params)
 	if err != nil {
 		return 0, errors.Wrap(ErrSelectDb, err)
@@ -126,8 +121,7 @@ func (r *statisticRepository) GetTotalActiveEndUsers(ctx context.Context) (int, 
 
 func (r *statisticRepository) GetTotalActiveEnterprises(ctx context.Context) (int, error) {
 	query := `SELECT COUNT(*) FROM users where role = 'enterprise' and status = 'active'`
-	params := map[string]interface{}{
-	}
+	params := map[string]interface{}{}
 	rows, err := r.db.NamedQueryContext(ctx, query, params)
 	if err != nil {
 		return 0, errors.Wrap(ErrSelectDb, err)
@@ -145,7 +139,7 @@ func (r *statisticRepository) GetTotalActiveEnterprises(ctx context.Context) (in
 }
 
 func (r *statisticRepository) GetTotalNewEnterprisesInTime(ctx context.Context, start time.Time, end time.Time) (admin.Statistic, error) {
-	query := `SELECT DATE(created_at) AS DATE, COUNT(id) AS NUM FROM users where role = 'enterprise' and created_at >= $1 and created_at <= $2 GROUP BY DATE(created_at) ORDER BY DATE(created_at)`
+	query := `SELECT DATE(created_at) AS DATE, COUNT(id) AS NUM FROM users where role = 'enterprise' and created_at >= :start and created_at <= :end GROUP BY DATE(created_at) ORDER BY DATE(created_at)`
 	params := map[string]interface{}{
 		"start": start,
 		"end":   end,
@@ -166,9 +160,8 @@ func (r *statisticRepository) GetTotalNewEnterprisesInTime(ctx context.Context, 
 	}
 }
 
-
 func (r *statisticRepository) GetTotalNewEndUsersInTime(ctx context.Context, start time.Time, end time.Time) (admin.Statistic, error) {
-	query := `SELECT DATE(created_at) AS DATE, COUNT(id) AS NUM FROM users where role = 'end_user' and created_at >= $1 and created_at <= $2 GROUP BY DATE(created_at) ORDER BY DATE(created_at)`
+	query := `SELECT DATE(created_at) AS DATE, COUNT(id) AS NUM FROM users where role = 'end_user' and created_at >= :start and created_at <= :end GROUP BY DATE(created_at) ORDER BY DATE(created_at)`
 	params := map[string]interface{}{
 		"start": start,
 		"end":   end,

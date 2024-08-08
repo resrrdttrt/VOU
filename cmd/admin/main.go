@@ -72,11 +72,16 @@ func loadConfig() config {
 func main() {
 	cfg := loadConfig()
 
+	// fake auth service
+	admin.ConnectToPostgres()
+
+	// logger
 	logging, err := logger.New(os.Stdout, cfg.logLevel)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
+	// postgres
 	rdb := connectToDBRead(cfg.dbConfig, logging)
 	wdb := connectToDBWrite(cfg.dbConfig, logging)
 	defer rdb.Close()

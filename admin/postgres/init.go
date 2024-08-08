@@ -110,6 +110,22 @@ func migrateDB(db *sql.DB) error {
 					`DROP TABLE "games"`,
 				},
 			},
+			{
+				Id: "access_token_table",
+				Up: []string{
+					`CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`,
+					`CREATE TABLE IF NOT EXISTS "access_tokens" (
+						id             	UUID            DEFAULT uuid_generate_v4() PRIMARY KEY,
+						created_at     	TIMESTAMP       DEFAULT NOW(),
+						updated_at     	TIMESTAMP       DEFAULT NOW(),
+						token          	VARCHAR(254)    NOT NULL,
+						user_id        	UUID            NOT NULL
+					)`,
+				},
+				Down: []string{
+					`DROP TABLE "access_tokens"`,
+				},
+			},
 		},
 	}
 

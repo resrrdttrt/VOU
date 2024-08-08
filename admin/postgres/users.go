@@ -23,6 +23,25 @@ func NewUserRepository(db db.Database, l log.Logger) admin.UserRepository {
 	}
 }
 
+func (r *usersRepository) GetAllUsers(ctx context.Context) ([]admin.User, error) {
+	query := `SELECT * FROM users`
+	params := map[string]interface{}{}
+	rows, err := r.db.NamedQueryContext(ctx, query, params)
+	if err != nil {
+		return nil, errors.Wrap(ErrSelectDb, err)
+	}
+	defer rows.Close()
+	var users []admin.User
+	for rows.Next() {
+		var user admin.User
+		if err := rows.StructScan(&user); err != nil {
+			return nil, errors.Wrap(ErrSelectDb, err)
+		}
+		users = append(users, user)
+	}
+	return users, nil
+}
+
 func (r *usersRepository) GetUserById(ctx context.Context, id string) (admin.User, error) {
 	query := `SELECT * FROM users WHERE id = :id`
 	params := map[string]interface{}{
@@ -63,17 +82,47 @@ func (r *usersRepository) CreateUser(ctx context.Context, user admin.User) error
 }
 
 func (r *usersRepository) UpdateUser(ctx context.Context, user admin.User) error {
-	query := `UPDATE users SET name = :name, username = :username, password = :password, email = :email, phone = :phone, role = :role, status = :status WHERE id = :id RETURNING *`
+	query := `UPDATE users SET `
 	params := map[string]interface{}{
-		"id":       user.ID,
-		"name":     user.Name,
-		"username": user.Username,
-		"password": user.Password,
-		"email":    user.Email,
-		"phone":    user.Phone,
-		"role":     user.Role,
-		"status":   user.Status,
+		"id": user.ID,
 	}
+
+	if user.Name != "" {
+		query += `name = :name, `
+		params["name"] = user.Name
+	}
+
+	if user.Username != "" {
+		query += `username = :username, `
+		params["username"] = user.Username
+	}
+
+	if user.Password != "" {
+		query += `password = :password, `
+		params["password"] = user.Password
+	}
+
+	if user.Email != "" {
+		query += `email = :email, `
+		params["email"] = user.Email
+	}
+
+	if user.Phone != "" {
+		query += `phone = :phone, `
+		params["phone"] = user.Phone
+	}
+
+	if user.Role != "" {
+		query += `role = :role, `
+		params["role"] = user.Role
+	}
+
+	if user.Status != "" {
+		query += `status = :status, `
+		params["status"] = user.Status
+	}
+
+	query = query[:len(query)-2] + ` WHERE id = :id RETURNING *`
 	_, err := r.db.NamedExecContext(ctx, query, params)
 	if err != nil {
 		return errors.Wrap(ErrUpdateDb, err)
