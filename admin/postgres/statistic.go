@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/resrrdttrt/VOU/admin"
@@ -150,23 +149,24 @@ func (r *statisticRepository) GetTotalNewEnterprisesInTime(ctx context.Context, 
 		return []admin.Statistic{}, errors.Wrap(ErrSelectDb, err)
 	}
 	defer rows.Close()
-	var statisticResult []admin.Statistic
-	var statistic admin.Statistic
-	if rows.Next() {
+	var statisticResults []admin.Statistic
+
+	for rows.Next() {
+		var statistic admin.Statistic
 		if err := rows.StructScan(&statistic); err != nil {
 			return []admin.Statistic{}, errors.Wrap(ErrSelectDb, err)
 		}
-		statisticResult = append(statisticResult, statistic)
-		return statisticResult, nil
-	} else {
-		return []admin.Statistic{}, nil
+		statistic.Day = statistic.Day.Truncate(24 * time.Hour)
+		statisticResults = append(statisticResults, statistic)
 	}
+
+	if err := rows.Err(); err != nil {
+		return []admin.Statistic{}, errors.Wrap(ErrSelectDb, err)
+	}
+	return statisticResults, nil
 }
 
 func (r *statisticRepository) GetTotalNewEndUsersInTime(ctx context.Context, start time.Time, end time.Time) ([]admin.Statistic, error) {
-	fmt.Printf("start %v \n", start)
-	fmt.Printf("end %v \n", end)
-
 	query := `SELECT DATE(created_at) AS day, COUNT(id) AS count FROM users where role = 'end_user' and created_at >= :start and created_at <= :end GROUP BY DATE(created_at) ORDER BY DATE(created_at)`
 	params := map[string]interface{}{
 		"start": start,
@@ -180,31 +180,16 @@ func (r *statisticRepository) GetTotalNewEndUsersInTime(ctx context.Context, sta
 	var statisticResults []admin.Statistic
 
 	for rows.Next() {
-		fmt.Printf("for \n")
-
 		var statistic admin.Statistic
-		var day string
-		if err := rows.Scan(&day, &statistic.Count); err != nil {
+		if err := rows.StructScan(&statistic); err != nil {
 			return []admin.Statistic{}, errors.Wrap(ErrSelectDb, err)
 		}
-		day = day[:10]
-		statistic.Day, err = time.Parse(time.RFC3339, day+"T00:00:00Z")
-		if err != nil {
-			return []admin.Statistic{}, errors.Wrap(ErrSelectDb, err)
-		}
-
+		statistic.Day = statistic.Day.Truncate(24 * time.Hour)
 		statisticResults = append(statisticResults, statistic)
 	}
 
 	if err := rows.Err(); err != nil {
 		return []admin.Statistic{}, errors.Wrap(ErrSelectDb, err)
 	}
-
-	// In kết quả ra để kiểm tra
-	fmt.Printf("Total rows: %d\n", len(statisticResults))
-	for _, stat := range statisticResults {
-		fmt.Printf("Day: %v, Count: %d\n", stat.Day, stat.Count)
-	}
-
 	return statisticResults, nil
 }
