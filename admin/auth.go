@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-
 	"github.com/resrrdttrt/VOU/pkg/common"
 )
 
@@ -12,8 +11,8 @@ var DB *sql.DB
 
 func ConnectToPostgres() {
 	// Đọc các biến môi trường hoặc sử dụng giá trị mặc định
-	host := common.Env("DB_HOST", "171.251.89.96")
-	port := common.Env("DB_PORT", "8907")
+	host := common.Env("DB_HOST", "localhost")
+	port := common.Env("DB_PORT", "5432")
 	user := common.Env("DB_USER", "postgres")
 	password := common.Env("DB_PASS", "1")
 	dbname := common.Env("DB_NAME", "admin")
