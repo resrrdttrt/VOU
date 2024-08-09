@@ -123,6 +123,5 @@ func (r *authRepository) GetUserRoleByID(userID string) (string, error) {
 	} else {
 		return "", errors.New("user not found")
 	}
-
-
 }
+

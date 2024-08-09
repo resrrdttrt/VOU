@@ -15,7 +15,7 @@ func ConnectToPostgres() {
 	host := common.Env("DB_HOST", "171.251.89.96")
 	port := common.Env("DB_PORT", "8907")
 	user := common.Env("DB_USER", "postgres")
-	password := common.Env("DB_PASSWORD", "newpassword")
+	password := common.Env("DB_PASS", "1")
 	dbname := common.Env("DB_NAME", "admin")
 
 	// Tạo chuỗi kết nối DSN từ biến môi trường hoặc giá trị mặc định
@@ -57,6 +57,21 @@ func GetUserRoleByID(userID string) (string, error) {
 	}
 
 	return role, nil
+}
+
+func GetUserIDByEventID(eventID string) (string, error) {
+	var userID string
+	query := `SELECT user_id FROM events WHERE id = $1`
+
+	err := DB.QueryRow(query, eventID).Scan(&userID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", fmt.Errorf("no user found for the given event ID")
+		}
+		return "", err
+	}
+
+	return userID, nil
 }
 
 type Token struct {

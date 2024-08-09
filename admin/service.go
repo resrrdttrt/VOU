@@ -8,11 +8,14 @@ import (
 )
 
 type adminService struct {
-	log       log.Logger
-	users     UserRepository
-	games     GameRepository
-	statistic StatisticRepository
-	auth      AuthRepository
+	log        log.Logger
+	users      UserRepository
+	games      GameRepository
+	statistic  StatisticRepository
+	auth       AuthRepository
+	enterprise EnterpriseRepository
+	event      EventRepository
+	voucher    VoucherRepository
 }
 
 type Service interface {
@@ -20,6 +23,9 @@ type Service interface {
 	gameService
 	statisticService
 	authService
+	enterpriseService
+	eventService
+	voucherService
 }
 
 type userService interface {
@@ -65,13 +71,38 @@ type authService interface {
 	GetUserRoleByID(userID string) (string, error)
 }
 
-func NewAdminService(log log.Logger, users UserRepository, games GameRepository, statistic StatisticRepository, auth AuthRepository) Service {
+type enterpriseService interface {
+	RegisterEnterprise(ctx context.Context, enterprise Enterprise) error
+	GetEnterpriseInfo(ctx context.Context) (Enterprise, error)
+	UpdateEnterpriseInfo(ctx context.Context, enterprise Enterprise) error
+}
+
+type eventService interface {
+	GetAllEvents(ctx context.Context) ([]Event, error)
+	GetEventByID(ctx context.Context, id string) (Event, error)
+	GetEventByTime(ctx context.Context, start time.Time, end time.Time) ([]Event, error)
+	CreateEvent(ctx context.Context, event Event) error
+	UpdateEvent(ctx context.Context, event Event) error
+}
+
+type voucherService interface {
+	// GetAllVouchers(ctx context.Context) ([]Voucher, error)
+	GetAllVouchersByEventID(ctx context.Context, eventID string) ([]Voucher, error)
+	GetVoucherByID(ctx context.Context, id string, eventID string) (Voucher, error)
+	CreateVoucher(ctx context.Context, voucher Voucher) error
+	UpdateVoucher(ctx context.Context, voucher Voucher) error
+	DeleteVoucher(ctx context.Context, id string, eventID string) error
+}
+
+func NewAdminService(log log.Logger, users UserRepository, games GameRepository, statistic StatisticRepository, auth AuthRepository, enterprise EnterpriseRepository, event EventRepository, voucher VoucherRepository) Service {
 	return &adminService{
 		log:       log,
 		users:     users,
 		games:     games,
 		statistic: statistic,
 		auth:      auth,
+		enterprise: enterprise,
+		event:     event,
 	}
 }
 
@@ -186,3 +217,65 @@ func (s *adminService) GetUserIDByAccessToken(accessToken string) (string, error
 func (s *adminService) GetUserRoleByID(userID string) (string, error) {
 	return s.auth.GetUserRoleByID(userID)
 }
+
+func (s *adminService) RegisterEnterprise(ctx context.Context, enterprise Enterprise) error {
+	return s.enterprise.CreateEnterprise(ctx, enterprise)
+}
+
+func (s *adminService) GetEnterpriseInfo(ctx context.Context) (Enterprise, error) {
+	enterpriseID := ctx.Value("userID").(string)
+	return s.enterprise.GetEnterpriseByID(ctx, enterpriseID)
+}
+
+func (s *adminService) UpdateEnterpriseInfo(ctx context.Context, enterprise Enterprise) error {
+	return s.enterprise.UpdateEnterprise(ctx, enterprise)
+}
+
+func (s *adminService) GetAllEvents(ctx context.Context) ([]Event, error) {
+	enterpriseID := ctx.Value("userID").(string)
+	return s.event.GetAllEventsByEnterpriseID(ctx, enterpriseID)
+}
+
+func (s *adminService) GetEventByID(ctx context.Context, id string) (Event, error) {
+	enterpriseID := ctx.Value("userID").(string)
+	return s.event.GetEventByID(ctx, id, enterpriseID)
+}
+
+func (s *adminService) GetEventByTime(ctx context.Context, start time.Time, end time.Time) ([]Event, error) {
+	enterpriseID := ctx.Value("userID").(string)
+	return s.event.GetEventByTime(ctx,enterpriseID, start, end)
+}
+
+func (s *adminService) CreateEvent(ctx context.Context, event Event) error {
+	return s.event.CreateEvent(ctx, event)
+}
+
+func (s *adminService) UpdateEvent(ctx context.Context, event Event) error {
+	return s.event.UpdateEvent(ctx, event)
+}
+
+// func (s *adminService) GetAllVouchers(ctx context.Context) ([]Voucher, error) {
+// 	return s.voucher.GetAllVouchers(ctx)
+// }
+
+func (s *adminService) GetAllVouchersByEventID(ctx context.Context, eventID string) ([]Voucher, error) {
+	return s.voucher.GetAllVouchersByEventID(ctx, eventID)
+}
+
+func (s *adminService) GetVoucherByID(ctx context.Context, id string, eventID string) (Voucher, error) {
+	return s.voucher.GetVoucherByID(ctx, id, eventID)
+}
+
+func (s *adminService) CreateVoucher(ctx context.Context, voucher Voucher) error {
+	return s.voucher.CreateVoucher(ctx, voucher)
+}
+
+func (s *adminService) UpdateVoucher(ctx context.Context, voucher Voucher) error {
+	return s.voucher.UpdateVoucher(ctx, voucher)
+}
+
+func (s *adminService) DeleteVoucher(ctx context.Context, id string, eventID string) error {
+	return s.voucher.DeleteVoucher(ctx, id, eventID)
+}
+
+
