@@ -18,16 +18,16 @@ import (
 )
 
 const (
-	DefHTTPPort       = "1111"
+	DefHTTPPort       = "3000"
 	DefLogLevel       = "info"
 	ConnectionTimeout = 10
 
-	DefDBHost      = "localhost"
-	DefDBPort      = "5432"
-	DefDBPortRead  = "5432"
-	DefDBPortWrite = "5432"
+	DefDBHost      = "171.251.89.96"
+	DefDBPort      = "8907"
+	DefDBPortRead  = "8907"
+	DefDBPortWrite = "8907"
 	DefDBUser      = "postgres"
-	DefDBPass      = "1"
+	DefDBPass      = "newpassword"
 	DefDbName      = "admin"
 	DefSSLMode     = "disable"
 	DefSSLCert     = ""

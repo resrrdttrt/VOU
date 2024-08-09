@@ -138,46 +138,58 @@ func (r *statisticRepository) GetTotalActiveEnterprises(ctx context.Context) (in
 	}
 }
 
-func (r *statisticRepository) GetTotalNewEnterprisesInTime(ctx context.Context, start time.Time, end time.Time) (admin.Statistic, error) {
-	query := `SELECT DATE(created_at) AS DATE, COUNT(id) AS NUM FROM users where role = 'enterprise' and created_at >= :start and created_at <= :end GROUP BY DATE(created_at) ORDER BY DATE(created_at)`
+func (r *statisticRepository) GetTotalNewEnterprisesInTime(ctx context.Context, start time.Time, end time.Time) ([]admin.Statistic, error) {
+	query := `SELECT DATE(created_at) AS day, COUNT(id) AS count FROM users where role = 'enterprise' and created_at >= :start and created_at <= :end GROUP BY DATE(created_at) ORDER BY DATE(created_at)`
 	params := map[string]interface{}{
 		"start": start,
 		"end":   end,
 	}
 	rows, err := r.db.NamedQueryContext(ctx, query, params)
 	if err != nil {
-		return admin.Statistic{}, errors.Wrap(ErrSelectDb, err)
+		return []admin.Statistic{}, errors.Wrap(ErrSelectDb, err)
 	}
 	defer rows.Close()
-	var statistic admin.Statistic
-	if rows.Next() {
+	var statisticResults []admin.Statistic
+
+	for rows.Next() {
+		var statistic admin.Statistic
 		if err := rows.StructScan(&statistic); err != nil {
-			return admin.Statistic{}, errors.Wrap(ErrSelectDb, err)
+			return []admin.Statistic{}, errors.Wrap(ErrSelectDb, err)
 		}
-		return statistic, nil
-	} else {
-		return admin.Statistic{}, nil
+		statistic.Day = statistic.Day.Truncate(24 * time.Hour)
+		statisticResults = append(statisticResults, statistic)
 	}
+
+	if err := rows.Err(); err != nil {
+		return []admin.Statistic{}, errors.Wrap(ErrSelectDb, err)
+	}
+	return statisticResults, nil
 }
 
-func (r *statisticRepository) GetTotalNewEndUsersInTime(ctx context.Context, start time.Time, end time.Time) (admin.Statistic, error) {
-	query := `SELECT DATE(created_at) AS DATE, COUNT(id) AS NUM FROM users where role = 'end_user' and created_at >= :start and created_at <= :end GROUP BY DATE(created_at) ORDER BY DATE(created_at)`
+func (r *statisticRepository) GetTotalNewEndUsersInTime(ctx context.Context, start time.Time, end time.Time) ([]admin.Statistic, error) {
+	query := `SELECT DATE(created_at) AS day, COUNT(id) AS count FROM users where role = 'end_user' and created_at >= :start and created_at <= :end GROUP BY DATE(created_at) ORDER BY DATE(created_at)`
 	params := map[string]interface{}{
 		"start": start,
 		"end":   end,
 	}
 	rows, err := r.db.NamedQueryContext(ctx, query, params)
 	if err != nil {
-		return admin.Statistic{}, errors.Wrap(ErrSelectDb, err)
+		return []admin.Statistic{}, errors.Wrap(ErrSelectDb, err)
 	}
 	defer rows.Close()
-	var statistic admin.Statistic
-	if rows.Next() {
+	var statisticResults []admin.Statistic
+
+	for rows.Next() {
+		var statistic admin.Statistic
 		if err := rows.StructScan(&statistic); err != nil {
-			return admin.Statistic{}, errors.Wrap(ErrSelectDb, err)
+			return []admin.Statistic{}, errors.Wrap(ErrSelectDb, err)
 		}
-		return statistic, nil
-	} else {
-		return admin.Statistic{}, nil
+		statistic.Day = statistic.Day.Truncate(24 * time.Hour)
+		statisticResults = append(statisticResults, statistic)
 	}
+
+	if err := rows.Err(); err != nil {
+		return []admin.Statistic{}, errors.Wrap(ErrSelectDb, err)
+	}
+	return statisticResults, nil
 }
