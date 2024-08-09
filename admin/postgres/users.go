@@ -59,7 +59,7 @@ func (r *usersRepository) GetUserById(ctx context.Context, id string) (admin.Use
 		}
 		return user, nil
 	} else {
-		return admin.User{}, nil
+		return admin.User{}, errors.Wrap(ErrNoData, err)
 	}
 }
 

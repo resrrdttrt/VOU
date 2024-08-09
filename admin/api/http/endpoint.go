@@ -147,11 +147,11 @@ func createGameEndpoint(svc admin.Service) endpoint.Endpoint {
 			return nil, err
 		}
 		game := admin.Game{
-			Name:         req.Name,
-			Images:       req.Images,
-			Type:         req.Type,
+			Name:          req.Name,
+			Images:        req.Images,
+			Type:          req.Type,
 			ExchangeAllow: req.ExchangeAllow,
-			Tutorial:     req.Tutorial,
+			Tutorial:      req.Tutorial,
 		}
 		if err := svc.CreateGame(ctx, game); err != nil {
 			return nil, err
@@ -167,12 +167,12 @@ func updateGameEndpoint(svc admin.Service) endpoint.Endpoint {
 			return nil, err
 		}
 		game := admin.Game{
-			ID:           req.ID,
-			Name:         req.Name,
-			Images:       req.Images,
-			Type:         req.Type,
+			ID:            req.ID,
+			Name:          req.Name,
+			Images:        req.Images,
+			Type:          req.Type,
 			ExchangeAllow: req.ExchangeAllow,
-			Tutorial:     req.Tutorial,
+			Tutorial:      req.Tutorial,
 		}
 		if err := svc.UpdateGame(ctx, game); err != nil {
 			return nil, err
@@ -313,5 +313,213 @@ func loginEndpoint(svc admin.Service) endpoint.Endpoint {
 			return nil, err
 		}
 		return common.SuccessRes(token), nil
+	}
+}
+
+func registerEnterpriseEndpoint(svc admin.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(enterpriseRequest)
+		if err := req.validate(); err != nil {
+			return nil, err
+		}
+		enterprise := admin.Enterprise{
+			Name:     req.Name,
+			Field:    req.Field,
+			Location: req.Location,
+			GPS:      req.GPS,
+			Status:   req.Status,
+		}
+		if err := svc.RegisterEnterprise(ctx, enterprise); err != nil {
+			return nil, err
+		}
+		return common.SuccessRes(nil), nil
+	}
+}
+
+func getEnterpriseInfoEndpoint(svc admin.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		enterprise, err := svc.GetEnterpriseInfo(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return common.SuccessRes(enterprise), nil
+	}
+}
+
+func updateEnterpriseInfoEndpoint(svc admin.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(enterpriseRequest)
+		if err := req.validate(); err != nil {
+			return nil, err
+		}
+		enterprise := admin.Enterprise{
+			Name:     req.Name,
+			Field:    req.Field,
+			Location: req.Location,
+			GPS:      req.GPS,
+			Status:   req.Status,
+		}
+		if err := svc.UpdateEnterpriseInfo(ctx, enterprise); err != nil {
+			return nil, err
+		}
+		return common.SuccessRes(nil), nil
+	}
+}
+
+func getAllEventsEndpoint(svc admin.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		events, err := svc.GetAllEvents(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return common.SuccessRes(events), nil
+	}
+}
+
+func getEventByIDEndpoint(svc admin.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(getEventIDRequest)
+		if err := req.validate(); err != nil {
+			return nil, err
+		}
+		event, err := svc.GetEventByID(ctx, req.ID)
+		if err != nil {
+			return nil, err
+		}
+		return common.SuccessRes(event), nil
+	}
+}
+
+
+func createEventEndpoint(svc admin.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(createEventRequest)
+		if err := req.validate(); err != nil {
+			return nil, err
+		}
+		event := admin.Event{
+			Name:       req.Name,
+			Images:     req.Images,
+			VoucherNum: req.VoucherNum,
+			StartTime:  req.StartTime,
+			EndTime:    req.EndTime,
+			GameID:     req.GameID,
+			UserID:     req.UserID,
+		}
+		if err := svc.CreateEvent(ctx, event); err != nil {
+			return nil, err
+		}
+		return common.SuccessRes(nil), nil
+	}
+}
+
+func updateEventEndpoint(svc admin.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(updateEventRequest)
+		if err := req.validate(); err != nil {
+			return nil, err
+		}
+		event := admin.Event{
+			ID:         req.ID,
+			Name:       req.Name,
+			Images:     req.Images,
+			VoucherNum: req.VoucherNum,
+			StartTime:  req.StartTime,
+			EndTime:    req.EndTime,
+			GameID:     req.GameID,
+			UserID:     req.UserID,
+		}
+		if err := svc.UpdateEvent(ctx, event); err != nil {
+			return nil, err
+		}
+		return common.SuccessRes(nil), nil
+	}
+}
+
+func getAllVouchersByEventIDEndpoint(svc admin.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(getEventIDRequest)
+		if err := req.validate(); err != nil {
+			return nil, err
+		}
+		vouchers, err := svc.GetAllVouchersByEventID(ctx, req.ID)
+		if err != nil {
+			return nil, err
+		}
+		return common.SuccessRes(vouchers), nil
+	}
+}
+
+func getVoucherByIDEndpoint(svc admin.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(getVoucherByIDRequest)
+		if err := req.validate(); err != nil {
+			return nil, err
+		}
+		voucher, err := svc.GetVoucherByID(ctx, req.ID, req.EventID)
+		if err != nil {
+			return nil, err
+		}
+		return common.SuccessRes(voucher), nil
+	}
+}
+
+func createVoucherEndpoint(svc admin.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(createVoucherRequest)
+		if err := req.validate(); err != nil {
+			return nil, err
+		}
+		voucher := admin.Voucher{
+			Code:        req.Code,
+			Qrcode:      req.Qrcode,
+			Images:      req.Images,
+			Value:       req.Value,
+			Description: req.Description,
+			ExpiredTime: req.ExpiredTime,
+			Status:      req.Status,
+			EventID:     req.EventID,
+		}
+		if err := svc.CreateVoucher(ctx, voucher); err != nil {
+			return nil, err
+		}
+		return common.SuccessRes(nil), nil
+	}
+}
+
+func updateVoucherEndpoint(svc admin.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(updateVoucherRequest)
+		if err := req.validate(); err != nil {
+			return nil, err
+		}
+		voucher := admin.Voucher{
+			ID:          req.ID,
+			Code:        req.Code,
+			Qrcode:      req.Qrcode,
+			Images:      req.Images,
+			Value:       req.Value,
+			Description: req.Description,
+			ExpiredTime: req.ExpiredTime,
+			Status:      req.Status,
+			EventID:     req.EventID,
+		}
+		if err := svc.UpdateVoucher(ctx, voucher); err != nil {
+			return nil, err
+		}
+		return common.SuccessRes(nil), nil
+	}
+}
+
+func deleteVoucherEndpoint(svc admin.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(getVoucherByIDRequest)
+		if err := req.validate(); err != nil {
+			return nil, err
+		}
+		if err := svc.DeleteVoucher(ctx, req.ID, req.EventID); err != nil {
+			return nil, err
+		}
+		return common.SuccessRes(nil), nil
 	}
 }
