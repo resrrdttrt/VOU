@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	DefHTTPPort       = "1111"
+	DefHTTPPort       = "3000"
 	DefLogLevel       = "info"
 	ConnectionTimeout = 10
 

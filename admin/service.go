@@ -57,11 +57,11 @@ type statisticService interface {
 	GetTotalActiveEndUsers(ctx context.Context) (int, error)
 	GetTotalActiveEnterprises(ctx context.Context) (int, error)
 
-	GetTotalNewEnterprisesInTime(ctx context.Context, start time.Time, end time.Time) (Statistic, error)
-	GetTotalNewEndUsersInTime(ctx context.Context, start time.Time, end time.Time) (Statistic, error)
+	GetTotalNewEnterprisesInTime(ctx context.Context, start time.Time, end time.Time) ([]Statistic, error)
+	GetTotalNewEndUsersInTime(ctx context.Context, start time.Time, end time.Time) ([]Statistic, error)
 
-	GetTotalNewEndUsersInWeek(ctx context.Context) (Statistic, error)
-	GetTotalNewEnterprisesInWeek(ctx context.Context) (Statistic, error)
+	GetTotalNewEndUsersInWeek(ctx context.Context) ([]Statistic, error)
+	GetTotalNewEnterprisesInWeek(ctx context.Context) ([]Statistic, error)
 }
 
 type authService interface {
@@ -186,21 +186,21 @@ func (s *adminService) GetTotalActiveEnterprises(ctx context.Context) (int, erro
 	return s.statistic.GetTotalActiveEnterprises(ctx)
 }
 
-func (s *adminService) GetTotalNewEnterprisesInTime(ctx context.Context, start time.Time, end time.Time) (Statistic, error) {
+func (s *adminService) GetTotalNewEnterprisesInTime(ctx context.Context, start time.Time, end time.Time) ([]Statistic, error) {
 	return s.statistic.GetTotalNewEnterprisesInTime(ctx, start, end)
 }
 
-func (s *adminService) GetTotalNewEndUsersInTime(ctx context.Context, start time.Time, end time.Time) (Statistic, error) {
+func (s *adminService) GetTotalNewEndUsersInTime(ctx context.Context, start time.Time, end time.Time) ([]Statistic, error) {
 	return s.statistic.GetTotalNewEndUsersInTime(ctx, start, end)
 }
 
-func (s *adminService) GetTotalNewEndUsersInWeek(ctx context.Context) (Statistic, error) {
+func (s *adminService) GetTotalNewEndUsersInWeek(ctx context.Context) ([]Statistic, error) {
 	now := time.Now()
 	start := now.AddDate(0, 0, -7)
 	return s.statistic.GetTotalNewEndUsersInTime(ctx, start, now)
 }
 
-func (s *adminService) GetTotalNewEnterprisesInWeek(ctx context.Context) (Statistic, error) {
+func (s *adminService) GetTotalNewEnterprisesInWeek(ctx context.Context) ([]Statistic, error) {
 	now := time.Now()
 	start := now.AddDate(0, 0, -7)
 	return s.statistic.GetTotalNewEnterprisesInTime(ctx, start, now)
