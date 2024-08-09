@@ -283,10 +283,178 @@ func decodeLoginRequest(_ context.Context, r *http.Request) (interface{}, error)
 	return req, nil
 }
 
+func MakeEnterpriseHandler(svc admin.Service) http.Handler {
+	opts := []kithttp.ServerOption{
+		kithttp.ServerErrorEncoder(encodeError),
+	}
+
+	r := bone.New()
+
+	r.Post("/", kithttp.NewServer(
+		registerEnterpriseEndpoint(svc),
+		decodeEnterpriseRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Get("/", kithttp.NewServer(
+		getEnterpriseInfoEndpoint(svc),
+		decodeNothingRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Put("/", kithttp.NewServer(
+		updateEnterpriseInfoEndpoint(svc),
+		decodeEnterpriseRequest,
+		encodeResponse,
+		opts...,
+	))
+
+	handler := middlewares.VerifyRoleMiddleware(r)
+	return handler
+}
+
+func decodeEnterpriseRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var req enterpriseRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return nil, errors.Wrap(errors.ErrMalformedEntity, err)
+	}
+	return req, nil
+}
+
+
+func MakeEventHandler(svc admin.Service) http.Handler {
+	opts := []kithttp.ServerOption{
+		kithttp.ServerErrorEncoder(encodeError),
+	}
+	// TODO GetEventByTime
+	r := bone.New()
+	r.Get("/", kithttp.NewServer(
+		getAllEventsEndpoint(svc),
+		decodeNothingRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Get("/:id", kithttp.NewServer(
+		getEventByIDEndpoint(svc),
+		decodeGetEventIDRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Post("/", kithttp.NewServer(
+		createEventEndpoint(svc),
+		decodeCreateEventRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Put("/:id", kithttp.NewServer(
+		updateEventEndpoint(svc),
+		decodeUpdateEventRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Get("/:id/voucher", kithttp.NewServer(
+		getAllVouchersByEventIDEndpoint(svc),
+		decodeGetEventIDRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Get("/:id/voucher/:voucher_id", kithttp.NewServer(
+		getVoucherByIDEndpoint(svc),
+		decodeGetVoucherByIDRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Post("/:id/voucher", kithttp.NewServer(
+		createVoucherEndpoint(svc),
+		decodeCreateVoucherRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Put("/:id/voucher/:voucher_id", kithttp.NewServer(
+		updateVoucherEndpoint(svc),
+		decodeUpdateVoucherRequest,
+		encodeResponse,
+		opts...,
+	))
+	r.Delete("/:id/voucher/:voucher_id", kithttp.NewServer(
+		deleteVoucherEndpoint(svc),
+		decodeGetVoucherByIDRequest,
+		encodeResponse,
+		opts...,
+	))
+	// TODO: Verify eventID
+	handler := middlewares.VerifyRoleMiddleware(r)
+	return handler
+}
+
+func decodeGetEventIDRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var req getEventIDRequest
+	id := bone.GetValue(r, "id")
+	req.ID = id
+	return req, nil
+}
+
+func decodeCreateEventRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	var req createEventRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return nil, errors.Wrap(errors.ErrMalformedEntity, err)
+	}
+	userID := ctx.Value("userID").(string)
+	req.UserID = userID
+	return req, nil
+}
+
+func decodeUpdateEventRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	var req updateEventRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return nil, errors.Wrap(errors.ErrMalformedEntity, err)
+	}
+	id := bone.GetValue(r, "id")
+	req.ID = id
+	userID := ctx.Value("userID").(string)
+	req.UserID = userID
+	return req, nil
+}
+
+func decodeGetVoucherByIDRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var req getVoucherByIDRequest
+	id := bone.GetValue(r, "voucher_id")
+	eventID := bone.GetValue(r, "id")
+	req.ID = id
+	req.EventID = eventID
+	return req, nil
+}
+
+func decodeCreateVoucherRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	var req createVoucherRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return nil, errors.Wrap(errors.ErrMalformedEntity, err)
+	}
+	eventID := bone.GetValue(r, "id")
+	req.EventID = eventID
+	return req, nil
+}
+
+func decodeUpdateVoucherRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	var req updateVoucherRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return nil, errors.Wrap(errors.ErrMalformedEntity, err)
+	}
+	id := bone.GetValue(r, "voucher_id")
+	eventID := bone.GetValue(r, "id")
+	req.ID = id
+	req.EventID = eventID
+	return req, nil
+}
+
+
+
 func MakeHandler (svc admin.Service) http.Handler {
 	r := bone.New()
 	adminHandler := MakeAdminHandler(svc)
 	authHandler := MakeAuthHandler(svc)
+	enterpriseHandler := MakeEnterpriseHandler(svc)
+	r.SubRoute("/enterprise", enterpriseHandler)
 	r.SubRoute("/admin", adminHandler)
 	r.SubRoute("/auth", authHandler)
 	return r

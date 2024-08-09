@@ -59,7 +59,7 @@ func (r *gamesRepository) GetGameById(ctx context.Context, id string) (admin.Gam
 		}
 		return game, nil
 	} else {
-		return admin.Game{}, nil
+		return admin.Game{}, errors.Wrap(ErrNoData, err)
 	}
 }
 

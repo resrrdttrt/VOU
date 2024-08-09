@@ -33,19 +33,8 @@ var (
 	ErrMarshalJSON   = errors.New("Error marshaling to JSON")
 	ErrUnmarshalJSON = errors.New("Error unmarshaling")
 	ErrGenerateToken = errors.New("Failed to generate token")
+	ErrNoData        = errors.New("No data found")
 )
-
-// func Connect(cfg Config) (*sqlx.DB, error) {
-// 	url := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s sslcert=%s sslkey=%s sslrootcert=%s", cfg.Host, cfg.Port, cfg.User, cfg.Name, cfg.Pass, cfg.SSLMode, cfg.SSLCert, cfg.SSLKey, cfg.SSLRootCert)
-// 	db, err := sqlx.Open("postgres", url)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	if err := migrateDB(db.DB); err != nil {
-// 		return nil, err
-// 	}
-// 	return db, nil
-// }
 
 func ConnectRead(cfg Config) (*sqlx.DB, error) {
 	url := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s sslcert=%s sslkey=%s sslrootcert=%s \n", cfg.Host, cfg.PortRead, cfg.User, cfg.Name, cfg.Pass, cfg.SSLMode, cfg.SSLCert, cfg.SSLKey, cfg.SSLRootCert)
@@ -125,6 +114,68 @@ func migrateDB(db *sql.DB) error {
 				},
 				Down: []string{
 					`DROP TABLE "access_tokens"`,
+				},
+			},
+			{
+				Id: "enterprise_table",
+				Up: []string{
+					`CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`,
+					`CREATE TABLE IF NOT EXISTS "enterprises" (
+						id              UUID            DEFAULT uuid_generate_v4() PRIMARY KEY,
+						created_at      TIMESTAMP       DEFAULT NOW(),
+						updated_at      TIMESTAMP       DEFAULT NOW(),
+						name            VARCHAR(254)    NOT NULL,
+						field           VARCHAR(254)    NOT NULL,
+						location        VARCHAR(254)    NOT NULL,
+						gps             VARCHAR(254)    NOT NULL,
+						status          VARCHAR(20)     NOT NULL
+					)`,
+				},
+				Down: []string{
+					`DROP TABLE "enterprises"`,
+				},
+			},
+			{
+				Id: "event_table",
+				Up: []string{
+					`CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`,
+					`CREATE TABLE IF NOT EXISTS "events" (
+						id              UUID            DEFAULT uuid_generate_v4() PRIMARY KEY,
+						created_at      TIMESTAMP       DEFAULT NOW(),
+						updated_at      TIMESTAMP       DEFAULT NOW(),
+						user_id         UUID            NOT NULL,
+						name            VARCHAR(254)    NOT NULL,
+						images          TEXT            NOT NULL,
+						voucher_num     INTEGER         NOT NULL,
+						start_time      TIMESTAMP       NOT NULL,
+						end_time        TIMESTAMP       NOT NULL,
+						game_id         UUID            NOT NULL
+					)`,
+				},
+				Down: []string{
+					`DROP TABLE "events"`,
+				},
+			},
+			{
+				Id: "voucher_table",
+				Up: []string{
+					`CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`,
+					`CREATE TABLE IF NOT EXISTS "vouchers" (
+						id              UUID            DEFAULT uuid_generate_v4() PRIMARY KEY,
+						created_at      TIMESTAMP       DEFAULT NOW(),
+						updated_at      TIMESTAMP       DEFAULT NOW(),
+						code            VARCHAR(254)    NOT NULL,
+						qrcode          TEXT            NOT NULL,
+						images          TEXT            NOT NULL,
+						value           INTEGER         NOT NULL,
+						description     TEXT            NOT NULL,
+						expired_time    TIMESTAMP       NOT NULL,
+						status          VARCHAR(20)     NOT NULL,
+						event_id        UUID            NOT NULL,
+					)`,
+				},
+				Down: []string{
+					`DROP TABLE "vouchers"`,
 				},
 			},
 		},
